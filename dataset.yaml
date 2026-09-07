@@ -1,0 +1,21 @@
+# YOLO11 Dataset Configuration
+path: c:/Users/acer/Desktop/ระบบอัจฉริยะเพื่อการเฝ้าระวังและความปลอดภัยในงานอุตสาหกรรม/data_clean
+
+train: images/train
+val: images/val
+test: images/test
+
+# Classes (11 classes from sajjadali1995 dataset)
+nc: 11
+names:
+  0: Helmet
+  1: Gloves
+  2: Vest
+  3: Boots
+  4: Goggles
+  5: none
+  6: Person
+  7: no_helmet
+  8: no_goggle
+  9: no_gloves
+  10: no_boots

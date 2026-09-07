@@ -1,0 +1,39 @@
+﻿# ── Python ────────────────────────────────
+__pycache__/
+*.py[cod]
+*.class
+.Python
+*.egg-info/
+
+# ── Virtual environments ───────────────────
+venv/
+.venv/
+env/
+
+# ── Datasets (heavy raw images ~560 MB) ───
+data/
+data_clean/
+
+# ── Model weights (large binary files) ────
+# Share separately via Google Drive / OneDrive
+*.pt
+# Exception: keep the folder structure
+!runs/.gitkeep
+!dashboard/runs/.gitkeep
+
+# ── Output files ──────────────────────────
+*.mp4
+*.avi
+output_*.png
+output_*.jpg
+outputs/
+
+# ── Logs / temp ───────────────────────────
+*.log
+*.tmp
+
+# ── OS / IDE ──────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

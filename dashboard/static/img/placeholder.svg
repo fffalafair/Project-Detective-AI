@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0a0e1a"/>
+  <rect x="1" y="1" width="638" height="358" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+  <!-- Camera icon -->
+  <rect x="271" y="140" width="98" height="70" rx="8" fill="none" stroke="rgba(6,182,212,0.3)" stroke-width="2"/>
+  <circle cx="320" cy="175" r="22" fill="none" stroke="rgba(6,182,212,0.3)" stroke-width="2"/>
+  <circle cx="320" cy="175" r="10" fill="rgba(6,182,212,0.15)"/>
+  <rect x="294" y="134" width="18" height="8" rx="3" fill="rgba(6,182,212,0.3)"/>
+  <text x="320" y="235" text-anchor="middle" font-family="Inter,sans-serif" font-size="13" font-weight="600" fill="rgba(6,182,212,0.5)">ยังไม่มีสัญญาณวิดีโอ</text>
+  <text x="320" y="256" text-anchor="middle" font-family="Inter,sans-serif" font-size="11" fill="rgba(255,255,255,0.2)">คลิก ⚙ เพื่อเปิดกล้อง</text>
+</svg>

@@ -1,0 +1,58 @@
+services:
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    image: cctv-safety-dashboard:latest
+    container_name: cctv_dashboard
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      # Override with your own best.pt path if needed
+      MODEL_PATH: "/app/runs/detect/industrial_safety_yolo/yolo11s_safety_boots3/weights/best.pt"
+      CONF_THRESHOLD: "0.40"
+      # Disable Ultralytics telemetry inside container
+      YOLO_TELEMETRY: "false"
+    volumes:
+      # Mount the trained weights from the host so the container
+      # always uses your latest model without rebuilding the image
+      - ./runs:/app/runs:ro
+      # Mount yolo base weights
+      - ./yolo11s.pt:/app/yolo11s.pt:ro
+      # Persist output files
+      - ./outputs:/app/outputs
+    depends_on:
+      - mediamtx
+    # Uncomment the section below if you have an NVIDIA GPU
+    # and the NVIDIA Container Toolkit installed
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/model/status')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ─── mediamtx ─────────────────────────────────────────────────────────────
+  # รับสตรีมกล้องที่ "push" เข้ามาจากเครื่องอื่น (เช่น laptop เพื่อนผ่าน OBS)
+  # แล้วเปิดให้ dashboard (หรือ VLC) มาดึงออกไปแสดงผลผ่าน RTSP ได้
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    container_name: cctv_mediamtx
+    restart: unless-stopped
+    ports:
+      # RTMP ingest — ฝั่งเพื่อน push สตรีมเข้ามาที่พอร์ตนี้ (ผ่าน OBS)
+      - "1935:1935"
+      # RTSP output — dashboard / VLC ดึงสตรีมออกจากพอร์ตนี้
+      - "8554:8554"
+      # HLS output — เผื่ออยากดูผ่านเบราว์เซอร์ตรงๆ (ไม่บังคับ)
+      - "8888:8888"
+    environment:
+      MTX_PROTOCOLS: "tcp"

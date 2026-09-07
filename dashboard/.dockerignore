@@ -1,0 +1,38 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Model weight files (mounted as volumes, not baked into image)
+*.pt
+runs/
+
+# Output files
+outputs/
+*.mp4
+*.avi
+output_*.png
+output_*.jpg
+
+# Test / docs
+*.md
+*.txt
+!requirements.txt

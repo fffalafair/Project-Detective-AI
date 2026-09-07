@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CCTV Detective AI</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══════════════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="topbar-logo">CCTV · AI</div>
+  <div class="topbar-right">
+    <div class="sse-badge" id="sseBadge" title="Stream status">⏳ Connecting</div>
+    <div class="icon-btn" id="bellBtn" title="Alerts">
+      🔔
+      <span class="notif-dot" id="notifDot"></span>
+    </div>
+    <div class="icon-btn" title="User">👤</div>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- ══ SIDEBAR ════════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <nav>
+    <div class="sidebar-section">เมนู</div>
+    <a class="nav-item active" data-page="dashboard">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </a>
+    <a class="nav-item" data-page="alerts">
+      <span class="nav-icon">🚨</span><span>Alerts</span>
+    </a>
+    <a class="nav-item" data-page="analytics">
+      <span class="nav-icon">📈</span><span>Analytics</span>
+    </a>
+    <div class="sidebar-section">ระบบ</div>
+    <a class="nav-item" data-page="settings">
+      <span class="nav-icon">⚙️</span><span>Settings</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- ══ CONTENT ════════════════════════════════════════════════ -->
+<main class="content">
+
+  <!-- ════════════════════════════════════════
+       PAGE: DASHBOARD
+  ════════════════════════════════════════ -->
+  <section class="page active" id="page-dashboard">
+
+    <div class="dash-grid">
+
+      <!-- Camera 1 -->
+      <div class="cam-box">
+        <div class="cam-header">
+          <span id="camLabel1">📍 Camera 1 : หน้าทางเข้า</span>
+          <span class="cam-arrow" data-idx="0" title="เปลี่ยน source">⚙</span>
+        </div>
+        <div class="cam-body">
+          <img id="feed-cam1" src="/static/img/placeholder.svg" alt="Camera 1" />
+        </div>
+      </div>
+
+      <!-- Camera 2 -->
+      <div class="cam-box">
+        <div class="cam-header">
+          <span id="camLabel2">📍 Camera 2 : ลานจอดรถ</span>
+          <span class="cam-arrow" data-idx="1" title="เปลี่ยน source">⚙</span>
+        </div>
+        <div class="cam-body">
+          <img id="feed-cam2" src="/static/img/placeholder.svg" alt="Camera 2" />
+        </div>
+      </div>
+
+      <!-- PPE Status Panel -->
+      <div class="ppe-panel">
+        <div class="ppe-panel-title">🛡 PPE Status</div>
+
+        <div class="ppe-row">
+          <span class="ppe-label">Overall Check</span>
+          <span class="ppe-check none" id="ppeCheck">—</span>
+        </div>
+
+        <div class="ppe-row">
+          <span class="ppe-label">👤 บุคคล</span>
+          <div class="ppe-detail">
+            <span class="ppe-count" id="cntPerson">0</span>
+          </div>
+        </div>
+
+        <div class="ppe-row">
+          <span class="ppe-label">⛑ Helmet</span>
+          <div class="ppe-detail">
+            <span class="ppe-count" id="cntHelmet">0</span>
+            <span class="ppe-check none" id="ppeHelmet">—</span>
+          </div>
+        </div>
+
+        <div class="ppe-row">
+          <span class="ppe-label">🥾 Boots</span>
+          <div class="ppe-detail">
+            <span class="ppe-count" id="cntBoots">0</span>
+            <span class="ppe-check none" id="ppeBoots">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barrier Gate (ไม้กั้น) — สถานะเปิด/ปิด + การเชื่อมต่อบอร์ด -->
+      <div class="gate-box" id="gateBox" data-state="closed">
+        <div class="gate-head">
+          <span>🚧 ไม้กั้นทางเข้า</span>
+          <span class="gate-board" id="gateBoard">● บอร์ด: –</span>
+        </div>
+        <div class="gate-body">
+          <div class="gate-visual">
+            <div class="gate-lamp" id="gateLamp"></div>
+            <div class="gate-post"></div>
+            <div class="gate-arm" id="gateArm"></div>
+          </div>
+          <div class="gate-info">
+            <div class="gate-verdict" id="gateStatusText">ปิด</div>
+            <div class="gate-manual-ctl">
+              <button class="btn-navy btn-sm" id="btnGateOpen">เปิด</button>
+              <button class="btn-red btn-sm" id="btnGateClose">ปิด</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Count Strip -->
+      <div class="dash-counts">
+        <div class="dash-count-item dash-count--blue">
+          <div class="dash-count-icon">🚶</div>
+          <div class="dash-count-body">
+            <div class="dash-count-val" id="dashPersons">0</div>
+            <div class="dash-count-label">บุคคลในพื้นที่</div>
+          </div>
+        </div>
+        <div class="dash-count-item dash-count--green">
+          <div class="dash-count-icon">✅</div>
+          <div class="dash-count-body">
+            <div class="dash-count-val" id="dashSafe">0</div>
+            <div class="dash-count-label">PPE ถูกต้อง</div>
+          </div>
+        </div>
+        <div class="dash-count-item dash-count--red">
+          <div class="dash-count-icon">⚠️</div>
+          <div class="dash-count-body">
+            <div class="dash-count-val" id="dashViolations">0</div>
+            <div class="dash-count-label">ละเมิด PPE</div>
+          </div>
+        </div>
+        <div class="dash-count-item dash-count--purple">
+          <div class="dash-count-icon">🥾</div>
+          <div class="dash-count-body">
+            <div class="dash-count-val" id="dashBoots">0</div>
+            <div class="dash-count-label">Boots ที่ตรวจพบ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Line Chart -->
+      <div class="chart-box">
+        <div class="chart-title">สรุปผลรายวัน — Real-time</div>
+        <canvas id="dailyChart" height="90"></canvas>
+      </div>
+
+      <!-- Gauge -->
+      <div class="gauge-box">
+        <div class="chart-title" style="margin-bottom:4px">ตรวจเครื่องแต่งกาย</div>
+        <div class="gauge-canvas-wrap">
+          <canvas id="gaugeChart"></canvas>
+        </div>
+        <div class="gauge-text">
+          <div class="gauge-value" id="gaugeValue">—</div>
+          <div class="gauge-label" id="gaugeLabel" data-level="">รอข้อมูล</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       PAGE: ALERTS
+  ════════════════════════════════════════ -->
+  <section class="page" id="page-alerts">
+    <div class="alerts-grid">
+
+      <div class="alert-cam-box">
+        <div class="cam-header">
+          <span>📍 Camera 1 : หน้าทางเข้า</span>
+          <span class="cam-arrow" data-idx="0">⚙</span>
+        </div>
+        <div class="cam-body">
+          <img id="alert-feed" src="/static/img/placeholder.svg" alt="Alert Cam" />
+        </div>
+      </div>
+
+      <div class="alert-list-box">
+        <div class="alert-list-title">Live Alerts</div>
+        <div class="alert-list" id="alertList"></div>
+        <div class="alert-clear-wrap">
+          <button class="btn-red btn-sm" id="btnClearAlerts">ล้างทั้งหมด</button>
+        </div>
+      </div>
+
+      <div class="timeline-box">
+        <div class="chart-title" style="margin-bottom:8px">Timeline — Motion &amp; Events</div>
+        <canvas id="timelineChart" height="80"></canvas>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       PAGE: ANALYTICS
+  ════════════════════════════════════════ -->
+  <section class="page" id="page-analytics">
+    <div class="analytics-grid">
+
+      <!-- Count panel -->
+      <div class="count-panel">
+        <div class="count-item">
+          <div class="count-icon">🚶</div>
+          <div class="count-val" id="countPerson">0</div>
+          <div class="count-sub">บุคคล</div>
+        </div>
+        <div class="count-item">
+          <div class="count-icon">⛑</div>
+          <div class="count-val" id="countHelmet">0</div>
+          <div class="count-sub">Helmet</div>
+        </div>
+        <div class="count-item">
+          <div class="count-icon">🥾</div>
+          <div class="count-val" id="countBoots">0</div>
+          <div class="count-sub">Boots</div>
+        </div>
+      </div>
+
+      <!-- Bar chart -->
+      <div class="chart-box">
+        <div class="chart-title">จำนวนที่ตรวจพบ</div>
+        <canvas id="barChart" height="160"></canvas>
+      </div>
+
+      <!-- Line chart -->
+      <div class="chart-box">
+        <div class="chart-title">สรุปผลรายวัน — Real-time</div>
+        <canvas id="analyticLineChart" height="160"></canvas>
+      </div>
+
+      <!-- Gauge -->
+      <div class="gauge-box" style="grid-column:1/3">
+        <div class="chart-title" style="margin-bottom:4px">ตรวจเครื่องแต่งกาย</div>
+        <div class="gauge-canvas-wrap">
+          <canvas id="gaugeChart2"></canvas>
+        </div>
+        <div class="gauge-text">
+          <div class="gauge-value" id="gaugeValue2">—</div>
+          <div class="gauge-label" id="gaugeLabel2" data-level="">รอข้อมูล</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════
+       PAGE: SETTINGS
+  ════════════════════════════════════════ -->
+  <section class="page" id="page-settings">
+    <div class="settings-wrap">
+
+      <div class="settings-card">
+        <div class="settings-title">โมเดล YOLO</div>
+        <label>พาธ weights (.pt)</label>
+        <input type="text" id="modelPath" placeholder="runs/detect/.../weights/best.pt" />
+        <label>Confidence Threshold</label>
+        <div class="range-row">
+          <input type="range" id="confRange" min="0.1" max="0.95" step="0.05" value="0.4" />
+          <span id="confVal">0.40</span>
+        </div>
+        <button class="btn-navy" id="btnLoadModel">โหลดโมเดล</button>
+        <div class="settings-msg" id="settingsMsg"></div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-title">กล้องระยะไกล · Remote Camera (RTSP / HTTP)</div>
+        <label>URL สตรีมของเพื่อน</label>
+        <input type="text" id="remoteCamUrl"
+               placeholder="rtsp://100.x.y.z:8554/cam  |  http://…/video  |  https://youtu.be/…" />
+        <label>ชื่อกล้อง (ไม่บังคับ)</label>
+        <input type="text" id="remoteCamLabel" placeholder="เช่น กล้องเพื่อน — โน้ตบุ๊ก" />
+        <label>ใส่ในช่อง</label>
+        <div class="range-row">
+          <select id="remoteCamSlot" style="flex:1">
+            <option value="cam0">Camera 1</option>
+            <option value="cam1">Camera 2</option>
+            <option value="cam2">Camera 3</option>
+            <option value="cam3">Camera 4</option>
+            <option value="cam4">Camera 5</option>
+            <option value="cam5">Camera 6</option>
+          </select>
+        </div>
+        <div class="range-row" style="gap:8px">
+          <button class="btn-navy" id="btnRemoteCamTest">✔ ทดสอบการเชื่อมต่อ</button>
+          <button class="btn-navy" id="btnRemoteCamConnect">▶ เชื่อมต่อ</button>
+          <button class="btn-red"  id="btnRemoteCamStop">■ หยุด</button>
+        </div>
+        <div class="settings-msg" id="remoteCamMsg"></div>
+        <div class="sys-row"><span>transport</span><span>TCP (ตั้งผ่าน env RTSP_TRANSPORT)</span></div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-title">ไม้กั้น · Barrier Gate</div>
+        <div class="sys-row"><span>สถานะไม้กั้น</span><span id="setGateStatus">-</span></div>
+        <div class="sys-row"><span>การเชื่อมต่อบอร์ด (ESP32)</span><span id="setGateBoard">-</span></div>
+        <div class="sys-row"><span>เปลี่ยนสถานะล่าสุด</span><span id="setGateChanged">-</span></div>
+        <label>ตั้งค่าบอร์ดผ่าน env</label>
+        <div class="sys-row"><span>ESP32_URL</span><span>http://&lt;ip-บอร์ด&gt;</span></div>
+      </div>
+
+      <div class="settings-card">
+        <div class="settings-title">สถานะระบบ</div>
+        <div class="sys-row"><span>โมเดล</span><span id="sysModel">-</span></div>
+        <div class="sys-row"><span>เวลาระบบ</span><span id="sysClock">-</span></div>
+        <div class="sys-row"><span>กล้องที่เปิด</span><span id="sysCams">0</span></div>
+        <div class="sys-row"><span>Real-time stream</span><span id="sseStatus">⏳</span></div>
+        <div class="sys-row"><span>Frames รับแล้ว</span><span id="sysFrames">0</span></div>
+        <div class="sys-row"><span>Violations รวม</span><span id="sysTotalViol">0</span></div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

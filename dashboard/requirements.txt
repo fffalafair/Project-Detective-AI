@@ -1,0 +1,15 @@
+flask==3.0.3
+# 8.2.87 predates YOLO11 (no C3k2 block) and CANNOT load this project's
+# yolo11s.pt / trained best.pt.  Keep >= 8.3.0.
+ultralytics==8.4.142
+opencv-python-headless==4.10.0.84
+numpy==1.26.4
+gunicorn==22.0.0
+# resolves YouTube URLs to a direct stream for the camera source box.
+# keep it fresh – YouTube breaks old versions often.
+yt-dlp>=2024.8.6
+
+# torch/torchvision are pulled in by ultralytics as the CPU build.
+# For NVIDIA GPU inference install the CUDA build instead, e.g.:
+#   pip install torch==2.3.1 torchvision==0.18.1 \
+#       --index-url https://download.pytorch.org/whl/cu121
